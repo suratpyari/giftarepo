@@ -1,0 +1,43 @@
+!!!
+%html
+  %head
+    %title Giftarepo
+    %link{:href => "https://fonts.googleapis.com/css?family=Marck+Script", :rel => "stylesheet", :type => "text/css"}/
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+    = csrf_meta_tags
+  %body
+    .content-body.container-fluid
+      .text-center.header
+        %h2.logo Gift a Repo
+        - if current_user
+          = link_to "Find your Gift", "/"
+          = link_to "My Repo", "/?my=true"
+          = link_to "Logout", destroy_user_session_path, method: :delete
+      = yield
+      - if current_user
+        .fixed.pull-right
+          = link_to "#", class: "btn btn-primary", data: {toggle: "modal", target: "#newRepo"} do
+            %span.glyphicon.glyphicon-plus
+          = link_to "#" , class: "btn btn-primary .go-top" do
+            %span.glyphicon.glyphicon-triangle-top
+        #newRepo.modal.fade{:role => "dialog", :tabindex => "-1"}
+          .modal-dialog
+            .modal-content
+              .modal-header
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                  %span{"aria-hidden" => "true"} ×
+                %h4#myModalLabel.modal-title.text-center Gift your Repository
+              .modal-body
+                = render "/repos/form"
+      - if flash[:notice]
+        :javascript
+          $(document).ready(function(){
+            setTimeout(function(){ swal("Success", "#{flash[:notice]}", "success"); }, 1000);
+          })
+      - elsif flash[:error] || flash[:alert]
+        :javascript
+          $(document).ready(function(){
+            setTimeout(function(){ swal("Error", "#{flash[:error] || flash[:alert]}", "error"); }, 1000);
+          })
+

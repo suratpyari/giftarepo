@@ -1,0 +1,4 @@
+- if @repo.id
+  window.location = "/";
+- else
+  swal("", "#{@repo.errors.full_messages.join('\n')}", "error")

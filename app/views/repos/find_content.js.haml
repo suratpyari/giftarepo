@@ -1,0 +1,7 @@
+- if @github_repo
+  $("#repo_title").val("#{@github_repo.name}")
+  $("#repo_description").val("#{@github_repo.description}")
+  $("#repo_languages").val("#{@github_repo.language}")
+  $(':disabled').each(function(){this.disabled = false})
+- else
+  swal("", "This repository does not belongs to you.", "error")

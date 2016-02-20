@@ -1,0 +1,27 @@
+.container-fluid.fix-width
+  %h2.text-center
+    Gift
+    = @repo.title
+  - case @repo.status
+    - when 'gifted'
+      = form_for @repo, url: gift_repo_path(@repo) do |f|
+        - @repo.claims.each do |c|
+          .radio
+            %label
+              = f.radio_button :gifted_to_id, c.user.id
+              = link_to c.user.username, "https://github.com/#{c.user.username}", target: "_blank"
+        .checkbox
+          %label
+            = f.check_box :tnc
+            Yes I want to gift this repository to the user as I am not able to maintain this.
+        = submit_tag "Send a request to fork", class: "btn btn-lg btn-warning"
+    - when 'completed'
+      = form_for @repo, url: update_readme_repo_path(@repo) do |f|
+        .form-group
+          = text_field_tag :readme, "", placeholder: "Path for Readme (Ex: README.md)", class: "form-control"
+        = submit_tag "Update Readme", class: "btn btn-lg btn-primary"
+    - else
+      .text-center
+        Approved User:
+        - approved_user = @repo.claims.where(approved: true).first.user rescue @repo.gifted_to
+        = link_to approved_user.username, "https://github.com/#{approved_user.username}", target: "_blank"

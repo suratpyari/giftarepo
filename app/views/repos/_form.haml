@@ -1,0 +1,17 @@
+= form_for(@repo, remote: true) do |f|
+  .form-group
+    = f.text_field :url, class: "form-control", placeholder: "Github URL of your public repository"
+  .form-group
+    = link_to "Find detail", "javascript:void(0);", class: "btn btn-primary find_detail"
+  .form-group
+    = f.text_field :title, class: "form-control", placeholder: "Title", disabled: true
+  .form-group
+    = f.text_field :languages, class: "form-control", placeholder: "Languages", disabled: true
+  .form-group
+    = f.text_area :description, class: "form-control", placeholder: "About Repository", disabled: true
+  .checkbox
+    %label
+      = f.check_box :tnc
+      Yes I want to gift this repository to the user as I am not able to maintain this.
+  .form-group
+    = f.submit "Gift", class: "btn btn-primary", disabled: true

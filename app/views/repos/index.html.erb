@@ -1,0 +1,67 @@
+<div class="text-left container-fluid">
+  <div class="panel-group" id="accordion" role="tablist">
+    <% @repos.each do |repo| %>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading<%= @repo.id %>">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapse<%= @repo.id %>">
+              <div class="row">
+                <div class="col-xs-6 col-sm-8 col-md-9">
+                  <b><%= repo.title %></b><br/> <span class='author'>by <%= repo.user.username %>
+                  </span>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-3 text-right">
+                  <% if repo.user == current_user %>
+                    <% case repo.status %>
+                      <% when "gifted" %>
+                        (<%= repo.claims.count %> applications)
+                        <% if repo.claims.count>0 %>
+                          <%= link_to "Gift", repo, class: "btn btn-success" %>
+                        <% end %>
+                      <% when "approved" %>
+                        Approved
+                      <% when "forked" %>
+                        <%= link_to "Update Readme", repo, class: "btn btn-success" %>
+                      <% when "completed" %>
+                        Thank you for you gift.
+                    <% end %>
+                    <%= link_to 'Destroy', "javascript:void(0);", method: :delete, data: { message: 'Are you sure you want to delete this?', url: repo_path(repo) }, class: "btn btn-warning sweet-alert-delete" %>
+                  <% else %>
+                    <% approved_user = repo.claims.where(approved: true).first.user rescue repo.gifted_to %>
+                    <% case repo.status %>
+                      <% when "gifted" %>
+                        <span>(<%= repo.claims.count %> applications)</span>
+                        <% if !repo.claims.find_by_user_id(current_user.id) %>
+                          <%= link_to 'Apply for this Gift', repo, method: :put, class: "btn btn-primary" %>
+                        <% end %>
+                      <% when "approved" %>
+                        <% if approved_user == current_user %>
+                          <%= link_to "Fork", fork_repo_path(repo), method: :patch, class: "btn btn-success" %>
+                        <% else %>
+                          Approved User:
+                          <%= link_to approved_user.username, "https://github.com/#{approved_user.username}", target: "_blank" %>
+                        <% end %>
+                      <% when "forked" %>
+                        Approved User:
+                        <%= link_to approved_user.username, "https://github.com/#{approved_user.username}", target: "_blank" %>
+                      <% when "completed" %>
+                        Thank you for you gift.
+                    <% end %>
+
+                  <% end %>
+                </div>
+              </div>
+            </a>
+          </h4>
+        </div>
+        <div id="collapse<%= @repo.id %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading<%= @repo.id %>">
+          <div class="panel-body">
+            <%= repo.description %>
+            <br />
+            <%= link_to "View #{repo.title} on Github", repo.url, target: "_blank" %><br />
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <%= paginate @repos %>
+  </div>
